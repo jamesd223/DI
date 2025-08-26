@@ -4,10 +4,10 @@ using InfluxDB.Client.Writes;
 using SensorApp.Core.Models;
 using SensorApp.Infrastructure.Configuration;
 
-namespace SensorApp.Infrastructure.Data;
+namespace SensorApp.Infrastructure.Repositories;
 
-// Hybrid repository: readings -> Influx; sessions -> SQLite
-public class InfluxSensorRepository : ISensorRepository
+// All data stored in InfluxDB: readings and session lifecycle events
+public class InfluxSensorRepository : ISensorRepository, IDisposable
 {
   private readonly InfluxDBClient _client;
   private readonly string _org;
@@ -171,6 +171,9 @@ public class InfluxSensorRepository : ISensorRepository
     }
     return list;
   }
+
+  public void Dispose()
+  {
+    _client?.Dispose();
+  }
 }
-
-

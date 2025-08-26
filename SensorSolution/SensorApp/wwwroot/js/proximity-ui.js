@@ -87,7 +87,7 @@ window.proximityUI = (function () {
     }
   }
 
-  function updateDistance(distanceCm) {
+  function updateDistance(distanceIn) {
     if (!state) return;
     const now = performance.now();
     if (state.lastUi && now - state.lastUi <= 100) return;
@@ -97,7 +97,7 @@ window.proximityUI = (function () {
       if (state.mode !== "distance") {
         state.mode = "distance";
         try {
-          state.chart.data.datasets[0].label = "Distance (cm)";
+          state.chart.data.datasets[0].label = "Distance (in)";
           state.chart.options.scales.y.suggestedMin = 0;
           state.chart.options.scales.y.suggestedMax = undefined;
           state.chart.update();
@@ -105,7 +105,7 @@ window.proximityUI = (function () {
       }
       const ds = state.chart.data.datasets[0].data;
       const labels = state.chart.data.labels;
-      ds.push(distanceCm);
+      ds.push(distanceIn);
       labels.push("");
       if (ds.length > 120) {
         ds.shift();

@@ -75,24 +75,24 @@ window.sensorInterop = (function () {
     state = null;
   }
 
-  // expose a way to set calibration from the app (px0 at known D0)
-  function setCalibration(px0, D0cm) {
+  // expose a way to set calibration from the app (px0 at known D0, in inches)
+  function setCalibration(px0, D0in) {
     if (!state) state = { lastSent: 0, px0: null, D0: null };
     state.px0 = px0;
-    state.D0 = D0cm;
+    state.D0 = D0in;
   }
 
-  function calibrateNow(D0cm) {
+  function calibrateNow(D0in) {
     const last =
       window.sensorCore &&
       window.sensorCore.getLastMeasurement &&
       window.sensorCore.getLastMeasurement();
     if (!last || !last.px || last.px <= 0) return false;
-    setCalibration(last.px, D0cm);
+    setCalibration(last.px, D0in);
     return true;
   }
 
-  function refineScaleNow(D1cm) {
+  function refineScaleNow(D1in) {
     const last =
       window.sensorCore &&
       window.sensorCore.getLastMeasurement &&
@@ -102,7 +102,7 @@ window.sensorInterop = (function () {
     const base = (state.px0 * state.D0) / last.px;
     const gamma = state?.gamma ?? 1;
     if (base <= 0) return false;
-    state.scale = D1cm / Math.pow(base, gamma);
+    state.scale = D1in / Math.pow(base, gamma);
     return true;
   }
 

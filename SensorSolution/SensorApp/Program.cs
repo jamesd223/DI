@@ -1,6 +1,6 @@
-using System.IO; 
 using SensorApp.Components;
 using SensorApp.Infrastructure.Data;
+using SensorApp.Infrastructure.Repositories;
 using SensorApp.Infrastructure.Configuration;
 using SensorApp.Core.Models;
 
@@ -13,15 +13,12 @@ builder.Services.AddRazorComponents()
 builder.Services.AddServerSideBlazor()
     .AddCircuitOptions(o => o.DetailedErrors = true);
 
-// Removed EF/SQLite context; using InfluxDB only
 
 // Influx options
 var influxSection = builder.Configuration.GetSection("Influx");
 var influxOptions = influxSection.Get<InfluxOptions>() ?? new InfluxOptions();
 builder.Services.AddSingleton(influxOptions);
 
-// Repository DI (swap to Influx):
-// builder.Services.AddScoped<ISensorRepository, EfSensorRepository>();
 builder.Services.AddScoped<ISensorRepository, InfluxSensorRepository>();
 builder.Services.AddScoped<ISessionService, SessionService>();
 

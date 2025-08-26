@@ -1,5 +1,4 @@
 using SensorApp.Core.Models;
-using SensorApp.Infrastructure.Configuration;
 
 namespace SensorApp.Infrastructure.Data;
 
@@ -33,5 +32,3 @@ public class SessionService : ISessionService
   public Task<IReadOnlyList<Session>> GetSessionsAsync(CancellationToken ct = default) => _repo.GetSessionsAsync(ct);
   public Task<IReadOnlyList<SensorReading>> GetReadingsAsync(int sessionId, CancellationToken ct = default) => _repo.GetReadingsBySessionAsync(sessionId, ct);
 }
-
-
