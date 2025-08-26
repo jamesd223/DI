@@ -1,0 +1,100 @@
+@page "/history"
+@inject SensorApp.Core.Models.ISensorRepository Repo
+@inject IJSRuntime JS
+@using SensorApp.Core.Models
+
+<h3>Session History</h3>
+
+<div class="row g-3 align-items-center mb-3">
+  <div class="col-auto">
+    <label class="col-form-label">Session</label>
+  </div>
+  <div class="col-auto">
+    <select class="form-select" style="min-width: 240px" @bind="_selectedId">
+      <option value="0">-- Select --</option>
+      @foreach (var s in _sessions)
+      {
+        <option value="@s.Id">@((s.Name ?? $"Session {s.Id}") + " (" + s.StartedAt.ToLocalTime().ToString("g") + ")")</option>
+      }
+    </select>
+  </div>
+  <div class="col-auto">
+    <button class="btn btn-outline-primary" @onclick="LoadSession">Load</button>
+  </div>
+</div>
+
+<div class="card">
+  <div class="card-body">
+    <h5 class="card-title mb-3">Session Chart (Distance in if available)</h5>
+    <div class="row g-3 align-items-center mb-2">
+      <div class="col-auto">
+        <label class="col-form-label">Too close threshold (in)</label>
+      </div>
+      <div class="col-auto">
+        <input @bind="_threshold" type="number" min="1" max="100" step="0.1" class="form-control" style="width: 140px" placeholder="12" aria-label="Too close threshold in inches" />
+      </div>
+      <div class="col-auto">
+        @if (_readings.Count > 0)
+        {
+          <span>Close%: @(_closePct.ToString("F1"))%</span>
+        }
+      </div>
+    </div>
+    <div style="height:220px">
+      <canvas id="history-chart"></canvas>
+    </div>
+  </div>
+  <div class="card-footer text-muted">
+    @if (_current is not null)
+    {
+      <span>From: @_current.StartedAt.ToLocalTime():g</span>
+      @if (_current.EndedAt is not null)
+      {
+        <span class="ms-3">To: @_current.EndedAt?.ToLocalTime():g</span>
+      }
+      <span class="ms-3">Readings: @_readings.Count</span>
+      @if (_readings.Count > 0)
+      {
+        <span class="ms-3">Close%: @(_closePct.ToString("F1"))%</span>
+      }
+    }
+  </div>
+  
+</div>
+
+@code {
+  List<Session> _sessions = new();
+  List<SensorReading> _readings = new();
+  Session? _current;
+  int _selectedId;
+  double _threshold = 12;
+  double _closePct;
+
+  protected override async Task OnInitializedAsync()
+  {
+    _sessions = (await Repo.GetSessionsAsync()).ToList();
+  }
+
+  async Task LoadSession(){
+    if (_selectedId <= 0) return;
+    _current = _sessions.FirstOrDefault(s => s.Id == _selectedId);
+    _readings = (await Repo.GetReadingsBySessionAsync(_selectedId)).ToList();
+    ComputeClosePct();
+    await RenderChart();
+  }
+
+  async Task RenderChart(){
+    // prepare arrays (already value==distanceCm when present)
+    var values = _readings.Select(r => r.Value).ToArray();
+    await JS.InvokeVoidAsync("historyChart.render", values);
+  }
+
+  void ComputeClosePct(){
+    if (_readings.Count == 0){ _closePct = 0; return; }
+    // Too close if distance is less than or equal to threshold (inches)
+    var count = _readings.Count(r => r.Value <= _threshold);
+    _closePct = 100.0 * count / _readings.Count;
+  }
+}
+
+

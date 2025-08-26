@@ -1,0 +1,154 @@
+﻿@page "/"
+@inject IJSRuntime JS
+@inject SensorApp.Core.Models.ISensorRepository Repo
+@using Microsoft.JSInterop
+@using System.Threading
+@implements IDisposable
+@using SensorApp.Core.Models
+
+<h3>Face proximity</h3>
+<p>Latest: @latest.ToString("F3")</p>
+<div class="d-flex gap-2 align-items-center mb-2">
+  <input @bind="_sessionName" class="form-control" style="width: 220px" placeholder="Session name (optional)" />
+  @if (_currentSessionId is null)
+  {
+    <button class="btn btn-success" @onclick="StartSession">Start session</button>
+    <span class="text-muted">Not recording</span>
+  }
+  else
+  {
+    <button class="btn btn-danger" @onclick="StopSession">Stop session</button>
+    <span class="text-success">Recording (Session @_currentSessionId)</span>
+  }
+</div>
+<div class="d-flex gap-2 align-items-center mb-2">
+  <input @bind="_calibrationD0" type="number" min="5" max="200" step="1" class="form-control" style="width: 120px" placeholder="D0 (in)" />
+  <button class="btn btn-outline-primary" @onclick="CalibrateNow">Calibrate</button>
+  <input @bind="_refineD1" type="number" min="10" max="300" step="1" class="form-control" style="width: 120px" placeholder="D1 (in)" />
+  <button class="btn btn-outline-secondary" @onclick="RefineScale">Refine scale</button>
+  <input @bind="_gamma" type="number" min="0.5" max="3" step="0.1" class="form-control" style="width: 110px" placeholder="Gamma" />
+  <button class="btn btn-outline-secondary" @onclick="ApplyGamma">Apply gamma</button>
+  @if (_calibrated)
+  {
+    <span class="text-success">Calibrated at D0=@_calibrationD0 in</span>
+  }
+  else
+  {
+    <span class="text-muted">Hold at ~@_calibrationD0 in, then Calibrate</span>
+  }
+  @if (_lastDistanceIn is not null)
+  {
+    <span class="ms-2">Distance≈ @_lastDistanceIn?.ToString("F1") in</span>
+  }
+</div>
+
+<div class="row g-4 mt-3 align-items-start">
+  <div class="col-md-7">
+    <div class="card">
+      <div class="card-body">
+        <h5 class="card-title mb-3">Live Chart</h5>
+        <div style="height: 220px;">
+          <canvas id="proximity-chart"></canvas>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="col-md-5">
+    <div class="card">
+      <div class="card-body">
+        <h5 class="card-title mb-3">Camera</h5>
+        <div id="camera-root" class="camera-box"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+@code {
+  double latest;
+  double _calibrationD0 = 12;
+  bool _calibrated;
+  double? _lastDistanceIn;
+  double _refineD1 = 20;
+  double _gamma = 1;
+  string? _sessionName;
+  int? _currentSessionId;
+
+  // keep a ref so GC doesn’t collect it
+  DotNetObjectReference<Home>? _objRef;
+
+  // serialize EF writes + throttle rate
+  readonly SemaphoreSlim _dbGate = new(1, 1);
+  DateTime _lastSave = DateTime.MinValue;
+
+  protected override async Task OnAfterRenderAsync(bool firstRender){
+    if (!firstRender) return;
+
+    _objRef = DotNetObjectReference.Create(this);
+    await JS.InvokeVoidAsync("sensorInterop.start", _objRef, "#camera-root");
+  }
+
+  [JSInvokable]
+  public async Task OnReading(double value){
+    latest = value;
+
+    // throttle to ~5 writes/sec
+    var now = DateTime.UtcNow;
+    if ((now - _lastSave).TotalMilliseconds < 200) return;
+    _lastSave = now;
+
+    if (_currentSessionId is not null)
+    {
+      await _dbGate.WaitAsync();
+      try {
+        await Repo.AddReadingAsync(now, value, _currentSessionId, _lastDistanceIn);
+      }
+      finally {
+        _dbGate.Release();
+      }
+    }
+
+    await InvokeAsync(StateHasChanged);
+  }
+
+  [JSInvokable]
+  public Task OnCalibratedDistanceIn(double distanceIn)
+  {
+    _lastDistanceIn = distanceIn;
+    return InvokeAsync(StateHasChanged);
+  }
+
+  [JSInvokable]
+  public Task OnThreshold(double level)
+  {
+    // You can add UI feedback here (toast/alert). For now, re-render.
+    return InvokeAsync(StateHasChanged);
+  }
+
+  async Task CalibrateNow(){
+    var ok = await JS.InvokeAsync<bool>("sensorInterop.calibrateNow", _calibrationD0);
+    _calibrated = ok;
+    await InvokeAsync(StateHasChanged);
+  }
+
+  async Task RefineScale(){
+    await JS.InvokeVoidAsync("sensorInterop.refineScaleNow", _refineD1);
+  }
+
+  async Task ApplyGamma(){
+    await JS.InvokeVoidAsync("sensorInterop.setGamma", _gamma);
+  }
+
+  async Task StartSession(){
+    _currentSessionId = await Repo.StartSessionAsync(_sessionName, DateTime.UtcNow);
+    await InvokeAsync(StateHasChanged);
+  }
+
+  async Task StopSession(){
+    if (_currentSessionId is null) return;
+    await Repo.EndSessionAsync(_currentSessionId.Value, DateTime.UtcNow);
+    _currentSessionId = null;
+    await InvokeAsync(StateHasChanged);
+  }
+
+  public void Dispose() => _objRef?.Dispose();
+}

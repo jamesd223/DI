@@ -1,0 +1,15 @@
+D:\Projects-CD\DI\SensorSolution\SensorApp.Infrastructure\bin\Debug\net9.0\SensorApp.Infrastructure.deps.json
+D:\Projects-CD\DI\SensorSolution\SensorApp.Infrastructure\bin\Debug\net9.0\SensorApp.Infrastructure.dll
+D:\Projects-CD\DI\SensorSolution\SensorApp.Infrastructure\bin\Debug\net9.0\SensorApp.Infrastructure.pdb
+D:\Projects-CD\DI\SensorSolution\SensorApp.Infrastructure\bin\Debug\net9.0\SensorApp.Core.dll
+D:\Projects-CD\DI\SensorSolution\SensorApp.Infrastructure\bin\Debug\net9.0\SensorApp.Core.pdb
+D:\Projects-CD\DI\SensorSolution\SensorApp.Infrastructure\obj\Debug\net9.0\SensorApp.Infrastructure.csproj.AssemblyReference.cache
+D:\Projects-CD\DI\SensorSolution\SensorApp.Infrastructure\obj\Debug\net9.0\SensorApp.Infrastructure.GeneratedMSBuildEditorConfig.editorconfig
+D:\Projects-CD\DI\SensorSolution\SensorApp.Infrastructure\obj\Debug\net9.0\SensorApp.Infrastructure.AssemblyInfoInputs.cache
+D:\Projects-CD\DI\SensorSolution\SensorApp.Infrastructure\obj\Debug\net9.0\SensorApp.Infrastructure.AssemblyInfo.cs
+D:\Projects-CD\DI\SensorSolution\SensorApp.Infrastructure\obj\Debug\net9.0\SensorApp.Infrastructure.csproj.CoreCompileInputs.cache
+D:\Projects-CD\DI\SensorSolution\SensorApp.Infrastructure\obj\Debug\net9.0\SensorAp.FE4F89BE.Up2Date
+D:\Projects-CD\DI\SensorSolution\SensorApp.Infrastructure\obj\Debug\net9.0\SensorApp.Infrastructure.dll
+D:\Projects-CD\DI\SensorSolution\SensorApp.Infrastructure\obj\Debug\net9.0\refint\SensorApp.Infrastructure.dll
+D:\Projects-CD\DI\SensorSolution\SensorApp.Infrastructure\obj\Debug\net9.0\SensorApp.Infrastructure.pdb
+D:\Projects-CD\DI\SensorSolution\SensorApp.Infrastructure\obj\Debug\net9.0\ref\SensorApp.Infrastructure.dll
