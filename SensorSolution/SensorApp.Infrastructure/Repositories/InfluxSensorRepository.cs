@@ -2,6 +2,7 @@ using InfluxDB.Client;
 using InfluxDB.Client.Api.Domain;
 using InfluxDB.Client.Writes;
 using SensorApp.Core.Models;
+using SensorApp.Infrastructure.Configuration;
 
 namespace SensorApp.Infrastructure.Data;
 

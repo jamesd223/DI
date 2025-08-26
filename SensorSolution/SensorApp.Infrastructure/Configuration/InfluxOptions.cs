@@ -1,4 +1,4 @@
-namespace SensorApp.Infrastructure.Data;
+namespace SensorApp.Infrastructure.Configuration;
 
 public class InfluxOptions
 {

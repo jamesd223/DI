@@ -13,3 +13,4 @@ D:\Projects-CD\DI\SensorSolution\SensorApp.Infrastructure\obj\Debug\net9.0\Senso
 D:\Projects-CD\DI\SensorSolution\SensorApp.Infrastructure\obj\Debug\net9.0\refint\SensorApp.Infrastructure.dll
 D:\Projects-CD\DI\SensorSolution\SensorApp.Infrastructure\obj\Debug\net9.0\SensorApp.Infrastructure.pdb
 D:\Projects-CD\DI\SensorSolution\SensorApp.Infrastructure\obj\Debug\net9.0\ref\SensorApp.Infrastructure.dll
+D:\Projects-CD\DI\SensorSolution\SensorApp.Infrastructure\obj\Debug\net9.0\SensorApp.Infrastructure.sourcelink.json

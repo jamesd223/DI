@@ -1,6 +1,6 @@
 ﻿@page "/"
 @inject IJSRuntime JS
-@inject SensorApp.Core.Models.ISensorRepository Repo
+@inject SensorApp.Core.Models.ISessionService Session
 @using Microsoft.JSInterop
 @using System.Threading
 @implements IDisposable
@@ -100,7 +100,7 @@
     {
       await _dbGate.WaitAsync();
       try {
-        await Repo.AddReadingAsync(now, value, _currentSessionId, _lastDistanceIn);
+        await Session.AddReadingAsync(value, _lastDistanceIn);
       }
       finally {
         _dbGate.Release();
@@ -139,13 +139,13 @@
   }
 
   async Task StartSession(){
-    _currentSessionId = await Repo.StartSessionAsync(_sessionName, DateTime.UtcNow);
+    _currentSessionId = await Session.StartAsync(_sessionName);
     await InvokeAsync(StateHasChanged);
   }
 
   async Task StopSession(){
     if (_currentSessionId is null) return;
-    await Repo.EndSessionAsync(_currentSessionId.Value, DateTime.UtcNow);
+    await Session.StopAsync();
     _currentSessionId = null;
     await InvokeAsync(StateHasChanged);
   }

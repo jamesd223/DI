@@ -177,8 +177,6 @@ D:\Projects-CD\DI\SensorSolution\SensorApp\obj\Debug\net9.0\SensorApp.pdb
 D:\Projects-CD\DI\SensorSolution\SensorApp\obj\Debug\net9.0\SensorApp.genruntimeconfig.cache
 D:\Projects-CD\DI\SensorSolution\SensorApp\obj\Debug\net9.0\ref\SensorApp.dll
 D:\Projects-CD\DI\SensorSolution\SensorApp\obj\Debug\net9.0\compressed\d80hda5zfk-uj007kjiwh.gz
-D:\Projects-CD\DI\SensorSolution\SensorApp\obj\Debug\net9.0\compressed\cq3wmevbte-balgwnc48t.gz
-D:\Projects-CD\DI\SensorSolution\SensorApp\obj\Debug\net9.0\compressed\ipllg1k2rb-6qsocuh98p.gz
 D:\Projects-CD\DI\SensorSolution\SensorApp\bin\Debug\net9.0\CsvHelper.dll
 D:\Projects-CD\DI\SensorSolution\SensorApp\bin\Debug\net9.0\InfluxDB.Client.dll
 D:\Projects-CD\DI\SensorSolution\SensorApp\bin\Debug\net9.0\InfluxDB.Client.Core.dll
@@ -190,5 +188,8 @@ D:\Projects-CD\DI\SensorSolution\SensorApp\bin\Debug\net9.0\RestSharp.dll
 D:\Projects-CD\DI\SensorSolution\SensorApp\bin\Debug\net9.0\System.Configuration.ConfigurationManager.dll
 D:\Projects-CD\DI\SensorSolution\SensorApp\bin\Debug\net9.0\System.Reactive.dll
 D:\Projects-CD\DI\SensorSolution\SensorApp\bin\Debug\net9.0\System.Security.Cryptography.ProtectedData.dll
-D:\Projects-CD\DI\SensorSolution\SensorApp\obj\Debug\net9.0\compressed\x0hz78mvfn-q963c4w4nr.gz
-D:\Projects-CD\DI\SensorSolution\SensorApp\obj\Debug\net9.0\compressed\beq48v5e40-9tvjfflvu5.gz
+D:\Projects-CD\DI\SensorSolution\SensorApp\obj\Debug\net9.0\SensorApp.sourcelink.json
+D:\Projects-CD\DI\SensorSolution\SensorApp\obj\Debug\net9.0\compressed\pndy2i3vok-6qsocuh98p.gz
+D:\Projects-CD\DI\SensorSolution\SensorApp\obj\Debug\net9.0\compressed\orjloh03g4-q963c4w4nr.gz
+D:\Projects-CD\DI\SensorSolution\SensorApp\obj\Debug\net9.0\compressed\0xhuxm8y3q-balgwnc48t.gz
+D:\Projects-CD\DI\SensorSolution\SensorApp\obj\Debug\net9.0\compressed\famfax6528-9tvjfflvu5.gz

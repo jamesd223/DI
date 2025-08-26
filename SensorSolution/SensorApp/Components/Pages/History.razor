@@ -1,5 +1,5 @@
 @page "/history"
-@inject SensorApp.Core.Models.ISensorRepository Repo
+@inject SensorApp.Core.Models.ISessionService Session
 @inject IJSRuntime JS
 @using SensorApp.Core.Models
 
@@ -72,13 +72,13 @@
 
   protected override async Task OnInitializedAsync()
   {
-    _sessions = (await Repo.GetSessionsAsync()).ToList();
+    _sessions = (await Session.GetSessionsAsync()).ToList();
   }
 
   async Task LoadSession(){
     if (_selectedId <= 0) return;
     _current = _sessions.FirstOrDefault(s => s.Id == _selectedId);
-    _readings = (await Repo.GetReadingsBySessionAsync(_selectedId)).ToList();
+    _readings = (await Session.GetReadingsAsync(_selectedId)).ToList();
     ComputeClosePct();
     await RenderChart();
   }
