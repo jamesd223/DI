@@ -1,9 +1,27 @@
 // wwwroot/proximity-ui.js
 // Chart-only UI for proximity values.
+/**
+ * Module: proximityUI
+ * Responsibilities:
+ * - Initialize and manage a lightweight Chart.js line chart
+ * - Plot either normalized proximity [0,1] or distance in inches
+ * - Throttle chart updates for performance
+ *
+ * Public API
+ * - init({ canvasId }): Promise<void>
+ * - update(value) / updateNorm(value): void
+ * - updateDistance(distanceIn): void
+ * - destroy(): void
+ */
 
 window.proximityUI = (function () {
   let state = null; // { chart, lastUi, mode: 'norm'|'distance' }
 
+  /**
+   * Idempotently load a script tag by src.
+   * @param {string} src
+   * @returns {Promise<void>}
+   */
   function loadScriptOnce(src) {
     return new Promise((res, rej) => {
       if (document.querySelector(`script[src="${src}"]`)) return res();
@@ -19,6 +37,11 @@ window.proximityUI = (function () {
     return Math.max(0, Math.min(1, v));
   }
 
+  /**
+   * Initialize chart and internal state.
+   * @param {{ canvasId?: string }} options
+   * @returns {Promise<void>}
+   */
   async function init(options) {
     const opts = options || {};
     const canvasId = opts.canvasId || "proximity-chart";
@@ -65,6 +88,10 @@ window.proximityUI = (function () {
     state = { chart, lastUi: 0, mode: "norm" };
   }
 
+  /**
+   * Plot a normalized value in [0,1].
+   * @param {number} value
+   */
   function updateNorm(value) {
     if (!state) return;
     const v = clamp01(value);
@@ -87,6 +114,10 @@ window.proximityUI = (function () {
     }
   }
 
+  /**
+   * Plot a calibrated distance in inches and switch chart scale/label.
+   * @param {number} distanceIn
+   */
   function updateDistance(distanceIn) {
     if (!state) return;
     const now = performance.now();
@@ -115,6 +146,9 @@ window.proximityUI = (function () {
     }
   }
 
+  /**
+   * Dispose of chart and reset state.
+   */
   function destroy() {
     try {
       if (state?.chart) state.chart.destroy();

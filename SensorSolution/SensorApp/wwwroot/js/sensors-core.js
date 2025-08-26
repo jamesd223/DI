@@ -1,9 +1,27 @@
 // wwwroot/sensors-core.js
 // Camera + PoseNet only. Emits normalized values via callback.
+/**
+ * Module: sensorCore
+ * Responsibilities:
+ * - Lazily load TensorFlow.js and ml5 PoseNet
+ * - Open the user's webcam and listen for pose events
+ * - Emit a normalized proximity value in [0,1] via onValue
+ * - Emit raw measurement ({ px, norm, width }) via onMeasure
+ *
+ * Public API
+ * - start({ selector, onValue, onMeasure }): Promise<void>
+ * - stop(): void
+ * - getLastMeasurement(): { px:number, norm:number, width:number } | null
+ */
 
 window.sensorCore = (function () {
   let state = null; // { net, handler, stream, video, last }
 
+  /**
+   * Idempotently load a script tag by src.
+   * @param {string} src
+   * @returns {Promise<void>}
+   */
   function loadScriptOnce(src) {
     return new Promise((res, rej) => {
       if (document.querySelector(`script[src="${src}"]`)) return res();
@@ -19,6 +37,11 @@ window.sensorCore = (function () {
     return Math.max(0, Math.min(1, v));
   }
 
+  /**
+   * Start camera + PoseNet and begin emitting measurements.
+   * @param {{ selector?: string, onValue?: (v:number)=>void, onMeasure?: (m:{ px:number, norm:number, width:number })=>void }} options
+   * @returns {Promise<void>}
+   */
   async function start(options) {
     const opts = options || {};
     const selector = opts.selector;
@@ -73,7 +96,9 @@ window.sensorCore = (function () {
       const le = p?.leftEye,
         re = p?.rightEye;
       if (!le || !re || !video.videoWidth) return;
+      // Eye-to-eye pixel distance as a simple proxy for proximity
       const px = Math.abs(re.x - le.x);
+      // Normalize to [0..1] relative to frame width
       const norm = px / video.videoWidth;
       state && (state.last = { px, norm, width: video.videoWidth });
       if (onMeasure) onMeasure({ px, norm, width: video.videoWidth });
@@ -84,6 +109,9 @@ window.sensorCore = (function () {
     state = { net, handler, stream, video, last: null };
   }
 
+  /**
+   * Stop pose stream, release camera, and clean up DOM.
+   */
   function stop() {
     if (!state) return;
     try {
@@ -100,6 +128,10 @@ window.sensorCore = (function () {
     state = null;
   }
 
+  /**
+   * Return the most recent measurement or null if none yet.
+   * @returns {{ px:number, norm:number, width:number } | null}
+   */
   function getLastMeasurement() {
     return state?.last || null;
   }

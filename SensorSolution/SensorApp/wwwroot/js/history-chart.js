@@ -1,5 +1,19 @@
+/**
+ * Module: historyChart
+ * Responsibilities:
+ * - Render an immutable line chart for an array of values (session history)
+ * - Recreate chart when new data arrives
+ *
+ * Public API
+ * - render(values:number[]): Promise<void>
+ */
 window.historyChart = (function () {
   let chart = null;
+  /**
+   * Idempotently load a script tag by src.
+   * @param {string} src
+   * @returns {Promise<void>}
+   */
   function loadScriptOnce(src) {
     return new Promise((res, rej) => {
       if (document.querySelector(`script[src="${src}"]`)) return res();
@@ -10,6 +24,10 @@ window.historyChart = (function () {
       document.head.appendChild(s);
     });
   }
+  /**
+   * Render values on the #history-chart canvas, replacing any existing chart.
+   * @param {number[]} values
+   */
   async function render(values) {
     if (!window.Chart) {
       await loadScriptOnce(

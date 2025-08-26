@@ -1,9 +1,31 @@
 // wwwroot/sensors.js
 // Thin orchestrator: uses sensorCore and proximityUI, bridges to Blazor.
+/**
+ * Module: sensorInterop
+ * Responsibilities:
+ * - Initialize live chart (proximityUI) and capture (sensorCore)
+ * - Bridge measurements to Blazor via DotNetObjectReference
+ * - Provide calibration helpers (px0/D0, gamma, scale) and thresholding
+ *
+ * Public API
+ * - start(dotnetObj, selector): Promise<void>
+ * - stop(): void
+ * - setCalibration(px0, D0in): void
+ * - calibrateNow(D0in): boolean
+ * - refineScaleNow(D1in): boolean
+ * - setScale(scale): void
+ * - setGamma(gamma): void
+ * - setThreshold(threshold01): void
+ */
 
 window.sensorInterop = (function () {
   let state = null; // { lastSent, px0, D0, scale, gamma, threshold }
 
+  /**
+   * Throttle interop calls to avoid overwhelming the server.
+   * @param {any} dotnetObj DotNetObjectReference from Blazor
+   * @param {number} value Normalized [0..1] proximity value
+   */
   function throttleInterop(dotnetObj, value) {
     const now = performance.now();
     if (!state?.lastSent || now - state.lastSent > 150) {
@@ -12,6 +34,11 @@ window.sensorInterop = (function () {
     }
   }
 
+  /**
+   * Start live chart + capture and wire callbacks.
+   * @param {any} dotnetObj DotNetObjectReference from Blazor
+   * @param {string} selector CSS selector for the camera host element
+   */
   async function start(dotnetObj, selector) {
     stop();
 
@@ -65,6 +92,9 @@ window.sensorInterop = (function () {
     };
   }
 
+  /**
+   * Stop capture and dispose UI.
+   */
   function stop() {
     try {
       window.sensorCore && window.sensorCore.stop();
@@ -82,6 +112,11 @@ window.sensorInterop = (function () {
     state.D0 = D0in;
   }
 
+  /**
+   * Calibrate using the last measurement and a known distance D0.
+   * @param {number} D0in inches
+   * @returns {boolean} true if calibration was applied
+   */
   function calibrateNow(D0in) {
     const last =
       window.sensorCore &&
@@ -92,6 +127,11 @@ window.sensorInterop = (function () {
     return true;
   }
 
+  /**
+   * Refine scale to hit a target distance D1 for the current frame.
+   * @param {number} D1in inches
+   * @returns {boolean}
+   */
   function refineScaleNow(D1in) {
     const last =
       window.sensorCore &&
@@ -106,11 +146,19 @@ window.sensorInterop = (function () {
     return true;
   }
 
+  /**
+   * Set multiplicative scale for distance.
+   * @param {number} scale
+   */
   function setScale(scale) {
     if (!state) return;
     state.scale = Number(scale) || 1;
   }
 
+  /**
+   * Set exponent for distance curve.
+   * @param {number} gamma > 0
+   */
   function setGamma(gamma) {
     if (!state) return;
     const g = Number(gamma);
@@ -118,6 +166,10 @@ window.sensorInterop = (function () {
     state.gamma = g;
   }
 
+  /**
+   * Set normalized threshold in [0,1] for OnThreshold callback.
+   * @param {number} threshold
+   */
   function setThreshold(threshold) {
     if (!state) return;
     const t = Number(threshold);
