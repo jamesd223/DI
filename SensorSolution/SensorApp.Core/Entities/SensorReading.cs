@@ -1,4 +1,5 @@
-namespace SensorApp.Core.Models;
+namespace SensorApp.Core.Entities;
+
 public class SensorReading {
   public int Id { get; set; }
   public DateTime Timestamp { get; set; }
@@ -6,3 +7,5 @@ public class SensorReading {
   public int? SessionId { get; set; }
   public Session? Session { get; set; }
 }
+
+

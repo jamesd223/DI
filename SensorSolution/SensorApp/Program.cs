@@ -2,7 +2,7 @@ using SensorApp.Components;
 using SensorApp.Infrastructure.Data;
 using SensorApp.Infrastructure.Repositories;
 using SensorApp.Infrastructure.Configuration;
-using SensorApp.Core.Models;
+using SensorApp.Core.Interfaces;
 
 var builder = WebApplication.CreateBuilder(args);
 

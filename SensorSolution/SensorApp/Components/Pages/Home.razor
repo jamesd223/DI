@@ -1,10 +1,10 @@
 ﻿@page "/"
 @inject IJSRuntime JS
-@inject SensorApp.Core.Models.ISessionService Session
+@inject SensorApp.Core.Interfaces.ISessionService Session
 @using Microsoft.JSInterop
 @using System.Threading
 @implements IDisposable
-@using SensorApp.Core.Models
+@using SensorApp.Core.Entities
 
 <h3>Face proximity</h3>
 <p>Latest: @latest.ToString("F3")</p>

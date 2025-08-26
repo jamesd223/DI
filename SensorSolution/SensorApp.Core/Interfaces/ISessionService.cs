@@ -1,4 +1,6 @@
-namespace SensorApp.Core.Models;
+using SensorApp.Core.Entities;
+
+namespace SensorApp.Core.Interfaces;
 
 public interface ISessionService
 {

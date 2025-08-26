@@ -1,4 +1,4 @@
-namespace SensorApp.Core.Models;
+namespace SensorApp.Core.Entities;
 
 public class Session
 {
@@ -6,5 +6,8 @@ public class Session
   public string? Name { get; set; }
   public DateTime StartedAt { get; set; }
   public DateTime? EndedAt { get; set; }
+
   public ICollection<SensorReading> Readings { get; set; } = new List<SensorReading>();
 }
+
+

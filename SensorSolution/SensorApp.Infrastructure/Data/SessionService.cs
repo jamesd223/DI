@@ -1,4 +1,5 @@
-using SensorApp.Core.Models;
+using SensorApp.Core.Entities;
+using SensorApp.Core.Interfaces;
 
 namespace SensorApp.Infrastructure.Data;
 
